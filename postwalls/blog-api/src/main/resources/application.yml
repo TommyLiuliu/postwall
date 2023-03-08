@@ -1,0 +1,19 @@
+server:
+  port: 8082
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql:///postwalls?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: Matrix****2747
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: cn.postwall.blog.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

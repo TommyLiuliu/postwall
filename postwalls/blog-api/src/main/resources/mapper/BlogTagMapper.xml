@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.postwall.blog.mapper.BlogTagMapper">
+
+    <resultMap id="basePOMap" type="cn.postwall.blog.pojo.po.BlogTagPO">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id, name, create_user, create_time
+    </sql>
+
+    <sql id="baseTable">
+        blog_tag
+    </sql>
+
+    <insert id="insertBlogTag">
+        INSERT INTO
+        <include refid="baseTable"/>(<include refid="baseColumn"/>)
+        VALUES(null,
+        trim(#{blogTag.name}),
+        #{blogTag.createUser},
+        now())
+    </insert>
+
+    <delete id="deleteBlogTag">
+        DELETE FROM
+        <include refid="baseTable"/>
+        WHERE id = #{id}
+    </delete>
+
+
+    <select id="pageBlogTag" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%',#{name},'%')
+            </if>
+        </where>
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countBlogTag" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findTagById" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="findTagByName" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE name = trim(#{name})
+        LIMIT 1
+    </select>
+
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.postwall.blog.mapper.BlogUserMapper">
+
+    <resultMap id="basePOMap" type="cn.postwall.blog.pojo.po.BlogUserPO">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="email" property="email" />
+        <result column="phone" property="phone" />
+        <result column="avatar" property="avatar" />
+        <result column="is_delete" property="isDelete" />
+        <result column="role" property="role" />
+        <result column="last_time_login" property="lastTimeLogin" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id, username, password, nickname, email, phone, avatar, is_delete, role, last_time_login, create_time, update_time
+    </sql>
+
+    <sql id="baseTable">
+        blog_user
+    </sql>
+
+    <insert id="insertBlogUser">
+        INSERT INTO
+        <include refid="baseTable"/>(<include refid="baseColumn"/>)
+        VALUES(null,
+        #{blogUser.username},
+        #{blogUser.password},
+        #{blogUser.nickname},
+        #{blogUser.email},
+        #{blogUser.phone},
+        #{blogUser.avatar},
+        #{blogUser.isDelete},
+        #{blogUser.role},
+        null,
+        now(),
+        now())
+    </insert>
+
+
+    <update id="updateBlogUser">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        username = #{blogUser.username},
+        password = #{blogUser.password},
+        nickname = #{blogUser.nickname},
+        email = #{blogUser.email},
+        phone = #{blogUser.phone},
+        avatar = #{blogUser.avatar},
+        role = #{blogUser.role},
+        update_time = now()
+        WHERE id = #{blogUser.id}
+    </update>
+
+    <update id="updateLoginTime">
+        UPDATE
+        <include refid="baseTable"/>
+        SET last_time_login = now()
+        WHERE id = #{userId}
+    </update>
+
+    <update id="updateIsDelete">
+        UPDATE
+        <include refid="baseTable"/>
+        SET is_delete = #{isDelete},
+        update_time = now()
+        WHERE id = #{userId}
+    </update>
+
+    <select id="pageBlogUser" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE concat('%',#{username},'%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE concat('%',#{phone},'%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE concat('%',#{email},'%')
+            </if>
+            AND is_delete = #{isDelete}
+        </where>
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countBlogUser" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE concat('%',#{username},'%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE concat('%',#{phone},'%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE concat('%',#{email},'%')
+            </if>
+            AND is_delete = #{isDelete}
+        </where>
+    </select>
+
+    <select id="findUserByUserName" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE username = #{username}
+        LIMIT 1
+    </select>
+
+    <select id="findUserByPhone" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE phone = #{phone}
+        LIMIT 1
+    </select>
+
+    <select id="findUserByEmail" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE email = #{email}
+        LIMIT 1
+    </select>
+
+    <select id="findUserById" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE id = #{userId}
+        LIMIT 1
+    </select>
+
+</mapper>

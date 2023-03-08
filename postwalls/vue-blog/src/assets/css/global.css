@@ -1,0 +1,107 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html body {
+    position: relative;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    font-family: Avenir,Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    color: #2c3e50;
+    background: #f6f8f9;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    text-decoration: none;
+}
+
+::-webkit-scrollbar {
+    width: 13px;
+    height: 13px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.4);
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    border-radius: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+
+
+.left-panel {
+    text-align: left;
+}
+
+.right-panel {
+    text-align: right;
+}
+.query-form {
+    margin-bottom: 15px;
+}
+
+.fa {
+    padding-right: 5px;
+}
+
+.query-form div .el-form .el-form-item {
+    margin: 0 10px 0 0;
+}
+
+/****修改Element UI样式****/
+.el-popper.is-light {
+    border: none !important;
+    border-radius: 5px !important;
+}
+.el-drawer {
+    background-color: #282C34 !important;
+    width: unset !important;
+}
+.el-drawer__body {
+    padding: 0 !important;
+}
+.el-button {
+    font-size: 12px !important;
+}
+.el-select {
+    width: 100%;
+}
+.el-select__tags {
+    height: 32px;
+    white-space: nowrap !important;
+    overflow: hidden;
+}
+html body .el-table td .cell .el-image, html body .el-table th .cell .el-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+}
+.el-pagination {
+    padding: 2px 5px;
+    margin: 15px 0 0 0;
+    font-weight: 400;
+    color: #000;
+    justify-content: center;
+}
+.el-tag {
+    border: none !important;
+}
+
+.el-dialog {
+    border-bottom: 10px solid #3f9ce7!important;
+    border-top: 5px solid #3f9ce7!important;
+}
+.el-dialog .el-dialog__header {
+    border-bottom: 1px solid #dcdfe6;
+}
+.el-date-editor.el-input, .el-date-editor.el-input__wrapper {
+    width: 100% !important;
+}

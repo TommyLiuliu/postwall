@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.postwall.blog.mapper.BlogArticleMapper">
+
+    <resultMap id="basePOMap" type="cn.postwall.blog.pojo.po.BlogArticlePO">
+        <id column="id" property="id" />
+        <result column="category_id" property="categoryId" />
+        <result column="title" property="title" />
+        <result column="link" property="link" />
+        <result column="create_time" property="createTime" />
+        <result column="content" property="content" />
+        <result column="cover_url" property="coverUrl" />
+        <result column="year" property="year" />
+        <result column="month" property="month" />
+        <result column="day" property="day" />
+        <result column="publish_date" property="publishDate" />
+        <result column="is_publish" property="isPublish" />
+        <result column="is_comment" property="isComment" />
+        <result column="is_top" property="isTop" />
+        <result column="read_num" property="readNum" />
+        <result column="praise_num" property="praiseNum" />
+        <result column="comment_num" property="commentNum" />
+        <result column="top_time" property="topTime" />
+        <result column="is_delete" property="isDelete" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id, category_id, title, link, create_time, content, cover_url, year, month, day, publish_date, is_publish, is_comment, is_top, read_num, praise_num, comment_num, top_time, is_delete, create_user, update_user, update_time
+    </sql>
+
+    <sql id="baseTable">
+        blog_article
+    </sql>
+
+    <insert id="insertBlogArticle" useGeneratedKeys="true" keyProperty="blogArticle.id">
+        INSERT INTO
+        <include refid="baseTable"/>(<include refid="baseColumn"/>)
+        VALUES(null,
+        #{blogArticle.categoryId},
+        #{blogArticle.title},
+        #{blogArticle.link},
+        now(),
+        #{blogArticle.content},
+        #{blogArticle.coverUrl},
+        #{blogArticle.year},
+        #{blogArticle.month},
+        #{blogArticle.day},
+        #{blogArticle.publishDate},
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        #{blogArticle.topTime},
+        0,
+        #{blogArticle.createUser},
+        #{blogArticle.updateUser},
+        now())
+    </insert>
+
+
+    <update id="updateBlogArticle">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        category_id = #{blogArticle.categoryId},
+        title = #{blogArticle.title},
+        link = #{blogArticle.link},
+        content = #{blogArticle.content},
+        cover_url = #{blogArticle.coverUrl},
+        update_user = #{blogArticle.updateUser},
+        update_time = now()
+        WHERE id = #{blogArticle.id}
+    </update>
+
+    <update id="updateIsDelete">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        is_delete = #{isDelete},
+        update_time = now()
+        WHERE id = #{articleId}
+    </update>
+
+    <update id="increaseReading">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        read_num = read_num + 1
+        WHERE id = #{articleId}
+    </update>
+
+    <update id="increasePraise">
+        UPDATE
+        <include refid="baseTable"/>
+        <set>
+            <if test="flag == true">
+                praise_num = praise_num + 1
+            </if>
+            <if test="flag == false">
+                praise_num = praise_num - 1
+            </if>
+        </set>
+        WHERE id = #{articleId}
+    </update>
+
+    <update id="updateCommentNum">
+        UPDATE
+        <include refid="baseTable"/>
+        <set>
+            <if test="flag == true">
+                comment_num = comment_num + 1
+            </if>
+            <if test="flag == false">
+                comment_num = comment_num - 1
+            </if>
+        </set>
+        WHERE id = #{articleId}
+    </update>
+
+    <update id="updateArticleState">
+        UPDATE
+        <include refid="baseTable"/>
+        <set>
+            <if test="publishState != null">
+                is_publish = #{publishState}
+            </if>
+            <if test="commentState != null">
+                is_comment = #{commentState}
+            </if>
+            <if test="topState != null">
+                is_top = #{topState}
+            </if>
+        </set>
+        WHERE id = #{articleId}
+    </update>
+
+    <select id="pageBlogArticle" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE concat('%',#{title},'%')
+            </if>
+            <if test="categoryId != null and categoryId > 0">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="userId != null and userId > 0">
+                AND create_user = #{userId}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND publish_date &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND publish_date &lt;= #{endTime}
+            </if>
+            AND is_delete = #{isDelete}
+        </where>
+        ORDER BY is_top DESC, praise_num DESC, create_time DESC
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countBlogArticle" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE concat('%',#{title},'%')
+            </if>
+            <if test="categoryId != null and categoryId > 0">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="userId != null and userId > 0">
+                AND create_user = #{userId}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND publish_date &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND publish_date &lt;= #{endTime}
+            </if>
+            AND is_delete = #{isDelete}
+        </where>
+    </select>
+
+    <select id="findArticleByLink" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE link = #{link}
+        AND is_publish = 1
+        AND is_delete = 0
+    </select>
+
+    <select id="findArticleByTitle" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        WHERE title = #{title}
+    </select>
+
+    <select id="findArticleById" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE id = #{id}
+    </select>
+
+</mapper>

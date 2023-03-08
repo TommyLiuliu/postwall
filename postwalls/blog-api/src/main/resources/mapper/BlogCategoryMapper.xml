@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.postwall.blog.mapper.BlogCategoryMapper">
+
+    <resultMap id="basePOMap" type="cn.postwall.blog.pojo.po.BlogCategoryPO">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="cover_url" property="coverUrl" />
+        <result column="state" property="state" />
+        <result column="sort" property="sort" />
+        <result column="remark" property="remark" />
+        <result column="is_delete" property="isDelete" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id, name, cover_url, state, sort, remark, is_delete, create_user, create_time, update_user, update_time
+    </sql>
+
+    <sql id="baseTable">
+        blog_category
+    </sql>
+
+    <insert id="insertBlogCategory">
+        INSERT INTO
+        <include refid="baseTable"/>(<include refid="baseColumn"/>)
+        VALUES(null,
+        trim(#{blogCategory.name}),
+        #{blogCategory.coverUrl},
+        #{blogCategory.state},
+        #{blogCategory.sort},
+        #{blogCategory.remark},
+        0,
+        #{blogCategory.createUser},
+        now(),
+        #{blogCategory.updateUser},
+        now())
+    </insert>
+
+
+    <update id="updateBlogCategory">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        name = #{blogCategory.name},
+        cover_url = #{blogCategory.coverUrl},
+        state = #{blogCategory.state},
+        sort = #{blogCategory.sort},
+        remark = #{blogCategory.remark},
+        update_user = #{blogCategory.updateUser},
+        update_time = now()
+        WHERE id = #{blogCategory.id}
+    </update>
+
+    <update id="updateIsDelete">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        is_delete = #{isDelete},
+        update_time = now()
+        WHERE id = #{id}
+    </update>
+    <update id="updateState">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        state = #{state},
+        update_time = now()
+        WHERE id = #{id}
+    </update>
+
+    <select id="pageBlogCategory" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%',#{name},'%')
+            </if>
+            <if test="state != null">
+                AND state = #{state}
+            </if>
+            AND is_delete = #{isDelete}
+        </where>
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countBlogCategory" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%',#{name},'%')
+            </if>
+            <if test="state != null">
+                AND state = #{state}
+            </if>
+            AND is_delete = #{isDelete}
+        </where>
+    </select>
+
+    <select id="findCategoryByName" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE name = trim(#{name})
+        LIMIT 1
+    </select>
+
+    <select id="findCategoryById" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
+</mapper>

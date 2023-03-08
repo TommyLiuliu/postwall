@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.postwall.blog.mapper.BlogArticlePraiseMapper">
+
+    <resultMap id="basePOMap" type="cn.postwall.blog.pojo.po.BlogArticlePraisePO">
+        <id column="id" property="id" />
+        <result column="article_id" property="articleId" />
+        <result column="user_id" property="userId" />
+        <result column="praise_time" property="praiseTime" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id, article_id, user_id, praise_time
+    </sql>
+
+    <sql id="baseTable">
+        blog_article_praise
+    </sql>
+
+    <insert id="insertBlogArticlePraise">
+        INSERT INTO
+        <include refid="baseTable"/>(<include refid="baseColumn"/>)
+        VALUES(null,
+        #{blogArticlePraise.articleId},
+        #{blogArticlePraise.userId},
+        now())
+    </insert>
+
+
+    <update id="updateBlogArticlePraise">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        article_id = #{blogArticlePraise.articleId},
+        user_id = #{blogArticlePraise.userId},
+        WHERE id = #{blogArticlePraise.id}
+    </update>
+
+    <delete id="cancelPraise">
+        DELETE FROM
+        <include refid="baseTable"/>
+        WHERE id = #{id}
+    </delete>
+
+    <select id="pageBlogArticlePraise" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countBlogArticlePraise" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+    </select>
+
+    <select id="countPraiseByArticleId" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE article_id = #{articleId}
+    </select>
+    <select id="findArticlePraise" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE article_id = #{articleId} and user_id = #{userId}
+    </select>
+
+</mapper>

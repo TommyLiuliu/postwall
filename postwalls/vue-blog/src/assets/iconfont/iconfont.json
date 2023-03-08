@@ -1,0 +1,23 @@
+{
+  "id": "3433324",
+  "name": "后台管理",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "21901441",
+      "name": "logo-vue",
+      "font_class": "logo-vue",
+      "unicode": "e8c1",
+      "unicode_decimal": 59585
+    },
+    {
+      "icon_id": "7533285",
+      "name": "退出全屏",
+      "font_class": "tuichuquanping",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    }
+  ]
+}

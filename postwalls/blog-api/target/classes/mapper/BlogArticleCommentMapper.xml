@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.postwall.blog.mapper.BlogArticleCommentMapper">
+
+    <resultMap id="basePOMap" type="cn.postwall.blog.pojo.po.BlogArticleCommentPO">
+        <id column="id" property="id" />
+        <result column="banner_id" property="bannerId" />
+        <result column="comment_time" property="commentTime" />
+        <result column="parent_id" property="parentId" />
+        <result column="article_id" property="articleId" />
+        <result column="user_id" property="userId" />
+        <result column="content" property="content" />
+        <result column="is_delete" property="isDelete" />
+        <result column="praise_num" property="praiseNum" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id, banner_id, comment_time, parent_id, article_id, user_id, content, is_delete, praise_num
+    </sql>
+
+    <sql id="baseTable">
+        blog_article_comment
+    </sql>
+
+    <insert id="insertBlogArticleComment">
+        INSERT INTO
+        <include refid="baseTable"/>(<include refid="baseColumn"/>)
+        VALUES(null,
+        #{blogArticleComment.bannerId},
+        now(),
+        #{blogArticleComment.parentId},
+        #{blogArticleComment.articleId},
+        #{blogArticleComment.userId},
+        #{blogArticleComment.content},
+        0,
+        0)
+    </insert>
+
+
+    <update id="updateBlogArticleComment">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        banner_id = #{blogArticleComment.bannerId},
+        parent_id = #{blogArticleComment.parentId},
+        article_id = #{blogArticleComment.articleId},
+        user_id = #{blogArticleComment.userId},
+        content = #{blogArticleComment.content},
+        is_delete = #{blogArticleComment.isDelete},
+        WHERE id = #{blogArticleComment.id}
+    </update>
+
+    <update id="updateIsDelete">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        is_delete = #{isDelete}
+        WHERE id = #{id}
+    </update>
+
+
+    <select id="pageBlogArticleComment" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countBlogArticleComment" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+    </select>
+
+    <select id="findArticleCommentById" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE id = #{commentId}
+    </select>
+    <select id="findArticleCommentParentByArticleId" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE article_id = #{articleId} AND is_delete = 0 AND banner_id = 0
+        ORDER BY praise_num DESC
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countArticleCommentParentByArticleId" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        WHERE article_id = #{articleId} AND is_delete = 0 AND banner_id = 0
+    </select>
+
+    <select id="findArticleCommentByBannerId" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE banner_id = #{bannerId} AND is_delete = 0 AND banner_id != 0
+        ORDER BY praise_num DESC
+    </select>
+
+    <select id="countArticleCommentParent" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        WHERE parent_id = #{commentId} AND is_delete = 0
+    </select>
+
+    <select id="pageArticleComment" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="isDelete != null">
+                AND is_delete = #{isDelete}
+            </if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countArticleComment" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="isDelete != null">
+                AND is_delete = #{isDelete}
+            </if>
+        </where>
+    </select>
+
+</mapper>

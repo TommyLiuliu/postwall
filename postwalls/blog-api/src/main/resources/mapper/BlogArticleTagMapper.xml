@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.postwall.blog.mapper.BlogArticleTagMapper">
+
+    <resultMap id="basePOMap" type="cn.postwall.blog.pojo.po.BlogArticleTagPO">
+        <id column="id" property="id" />
+        <result column="article_id" property="articleId" />
+        <result column="tag_id" property="tagId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id, article_id, tag_id, create_time
+    </sql>
+
+    <sql id="baseTable">
+        blog_article_tag
+    </sql>
+
+    <insert id="insertBlogArticleTag">
+        INSERT INTO
+        <include refid="baseTable"/>(<include refid="baseColumn"/>)
+        VALUES(null,
+        #{blogArticleTag.articleId},
+        #{blogArticleTag.tagId},
+        now())
+    </insert>
+
+
+    <update id="updateBlogArticleTag">
+        UPDATE
+        <include refid="baseTable"/>
+        SET
+        article_id = #{blogArticleTag.articleId},
+        tag_id = #{blogArticleTag.tagId}
+        WHERE id = #{blogArticleTag.id}
+    </update>
+
+    <delete id="deleteTagByTagId">
+        DELETE FROM
+        <include refid="baseTable"/>
+        WHERE tag_id = #{tagId}
+    </delete>
+    <delete id="deleteTagByArticle">
+        DELETE FROM
+        <include refid="baseTable"/>
+        WHERE article_id = #{articleId}
+    </delete>
+
+    <delete id="deleteTagById">
+        DELETE FROM
+        <include refid="baseTable"/>
+        WHERE id = #{id}
+    </delete>
+
+    <select id="pageBlogArticleTag" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="tagId != null and tagId > 0">
+                AND tag_id = #{tagId}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{curPage}, #{pageSize}
+    </select>
+
+    <select id="countBlogArticleTag" resultType="java.lang.Integer">
+        SELECT
+        count(id)
+        FROM
+        <include refid="baseTable"/>
+        <where>
+            <if test="tagId != null and tagId > 0">
+                AND tag_id = #{tagId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findTagByArticle" resultMap="basePOMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        <include refid="baseTable"/>
+        WHERE article_id = #{articleId}
+    </select>
+
+</mapper>
